@@ -8,9 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
-import java.util.Map;
-
 @RestController
 @RequestMapping(value = "/api")
 public class OrderController {
@@ -41,17 +38,15 @@ public class OrderController {
       @RequestBody Orders orders,
       @PathVariable("customerId") Long customerId,
       @PathVariable("productId") Long productId) {
-    Orders result = orderService.addOrder(orders.getQuantity(), customerId, productId);
-    if (result == null) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Not Found");
-    }
-    return ResponseEntity.ok(orderService.addOrder(orders.getQuantity(), customerId, productId));
+    return new ResponseEntity<>(
+        orderService.addOrder(orders.getQuantity(), customerId, productId), HttpStatus.CREATED);
   }
 
   // change quantity of a products in all order line with order id
   @PutMapping("/order/product/quantity/{orderId}")
   public ResponseEntity<?> changeQuantityOfProduct(
       @RequestBody Orders orders, @PathVariable("orderId") Long orderId) {
-    return orderService.changeQuantityOfProduct(orderId, orders.getQuantity());
+    return new ResponseEntity<>(
+        orderService.changeQuantityOfProduct(orderId, orders.getQuantity()), HttpStatus.ACCEPTED);
   }
 }

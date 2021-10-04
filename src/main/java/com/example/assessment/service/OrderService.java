@@ -8,11 +8,9 @@ import com.example.assessment.model.Orders;
 import com.example.assessment.model.Product;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
+
 
 @Service
 public class OrderService {
@@ -53,17 +51,9 @@ public class OrderService {
   }
 
   // Change quantity of a product in an order line
-  public ResponseEntity<?> changeQuantityOfProduct(Long productId, Long quantity) {
-    orderRepository
-        .findById(productId)
-        .ifPresentOrElse(
-            changeQuantityOfProduct -> {
-              changeQuantityOfProduct.setQuantity(quantity);
-              orderRepository.save(changeQuantityOfProduct);
-            },
-            () -> {
-              throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Product Not Found");
-            });
-    return null;
+  public Orders changeQuantityOfProduct(Long orderId, Long quantity) {
+    Orders order = orderRepository.findAll().get(Math.toIntExact(orderId - 1));
+    return orderRepository.save(
+        new Orders(order.getId(), order.getCustomer(), order.getProduct(), quantity));
   }
 }
